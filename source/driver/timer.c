@@ -6,7 +6,7 @@
 // To use time library of C
 #include <time.h>
 
-void delay()
+void startTimer()
 {
     // Converting time into milli_seconds
     int milli_seconds = 1000 * 3;
@@ -18,6 +18,8 @@ void delay()
     while (clock() < start_time + milli_seconds)
         ;
 }
+
+
 
 #endif // #ifndef __INCLUDE_TIMER_H__
 

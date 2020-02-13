@@ -9,10 +9,9 @@
 
 /**
  countdown timer from 3 seconds to 0
- @return 1 when timer is done
  */
 
-bool startTimer ();
+void startTimer ();
 
 
 #endif // #ifndef __INCLUDE_TIMER_H__

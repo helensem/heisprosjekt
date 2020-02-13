@@ -4,28 +4,12 @@
 
 #include "channels.h"
 #include "io.h"
+#include "hardware.h"
 
 
 #define N_FLOORS 4
 #define N_BUTTONS 3
 
-typedef enum {
-    OUT_OF_REACH = -1,
-    FIRST = 1,
-    SECOND = 2,
-    THIRD = 3,
-    FOURTH = 4
-} floor_nr;
-
-
-typedef enum {
-    UNKNOWN = -1,
-    OUTSIDE_UP = 0,
-    OUTSIDE_DOWN = 1,
-    INSIDE_CALL = 2,
-} order_type;
-
-//lager enums for å forenkle ting litt
 
 //Lager matrix for hver type bestilling. 4 etasjer og 3 ulike bstillinger
 //settes til en om aktiv bestilling og 0 om fullført/ingen aktiv bestilling
@@ -39,7 +23,7 @@ static int requests = [N_FLOORS]*[N_BUTTONS];
   @param button, what typed of request we want
 */
 
-void addRequest(floor_nr floor, order_type button);
+void addRequest(int floor, HardwareOrder button);
 
 
 /**
@@ -49,7 +33,7 @@ void addRequest(floor_nr floor, order_type button);
  @return 1 if the order is requested, 0 if not active
  */
 
-int getRequest(floor_nr floor, order_type button);
+int getRequest(int floor, HardwareOrder button);
 
 
 /**
@@ -59,7 +43,7 @@ int getRequest(floor_nr floor, order_type button);
  @return the next floor
  */
 
-int getNextRequest(floor_nr current_floor, elev_motor_direction_t dirn);
+int getNextRequest(int current_floor, HardwareMovement dir);
 
 
 
@@ -68,7 +52,7 @@ int getNextRequest(floor_nr current_floor, elev_motor_direction_t dirn);
  @param floor, the requested floor
  @param button, what typed of request we want
  */
-void remove_order(floor_nr floor, elev_motor_direction_t dirn);
+void removeRequest(int floor, HardwareMovement dir);
 
 /**
  removes all the requests
@@ -76,5 +60,5 @@ void remove_order(floor_nr floor, elev_motor_direction_t dirn);
 void clear_all();
 
 
-#endif // #ifndef __INCLUDE_IO_H__
+#endif // #ifndef __INCLUDE_QUEUE_H__
 

@@ -6,6 +6,7 @@
 #include "elevator_controller.h"
 
 
+
 void emergency_stop () {
     hardware_command_movement (STOP);
     clear_all ();
@@ -29,6 +30,10 @@ int get_current_floor {
         return -1;
 }
 
+
+int get_current_dir () {
+    
+}
 
 
 

@@ -10,11 +10,21 @@
 #include "channels.h"
 
 
+typedef enum {
+    IDLE,
+    MOVING_UP,
+    STOP,
+    DOOR_OPENED,
+} current_state;
+
 /**
  Function related to the emergency stop button. Clears all requests and stops the elevator.
  */
 
 void emergency_stop ();
+
+
+void obstruction ();
 
 
 /**
