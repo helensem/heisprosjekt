@@ -3,20 +3,23 @@
 #define __INCLUDE_TIMER_H__
 
 #include <stdio.h>
-// To use time library of C
+#include "timer.h"
 #include <time.h>
 
-void startTimer()
+// To use time library of C
+
+void startTimer(void)
 {
     // Converting time into milli_seconds
-    int milli_seconds = 1000 * 3;
+    int seconds = 3;
     
     // Storing start time
     clock_t start_time = clock();
     
     // looping till required time is not achieved
-    while (clock() < start_time + milli_seconds)
-        ;
+    if (clock() == (start_time + (seconds*CLOCKS_PER_SEC))){
+        return;
+    }
 }
 
 
