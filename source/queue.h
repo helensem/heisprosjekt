@@ -2,8 +2,6 @@
 #ifndef __INCLUDE_QUEUE_H__
 #define __INCLUDE_QUEUE_H__
 
-#include "channels.h"
-#include "io.h"
 #include "hardware.h"
 
 

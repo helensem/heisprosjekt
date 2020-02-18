@@ -7,7 +7,6 @@
 #include "timer.h"
 #include "hardware.h"
 #include "queue.h"
-#include "channels.h"
 
 
 typedef enum {
@@ -40,9 +39,9 @@ int get_current_floor ();
  General function for the elevator
  */
 
-void elevator controller ();
+void elevator_controller ();
 
 
 
-#endif // #ifndef __INCLUDE_TIMER_H__
+#endif // #ifndef __INCLUDE_ELEVATOR_CONTROLLER_H__
 
