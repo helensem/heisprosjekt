@@ -40,7 +40,7 @@ int get_current_floor ();
  General function for the elevator
  */
 
-void elevator controller ();
+void elevator_controller ();
 
 
 

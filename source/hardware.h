@@ -122,4 +122,6 @@ void hardware_command_stop_light(int on);
  */
 void hardware_command_order_light(int floor, HardwareOrder order_type, int on);
 
+static void clear_all_order_lights();
+
 #endif
