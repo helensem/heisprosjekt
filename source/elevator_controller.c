@@ -8,7 +8,7 @@
 
 
 void emergency_stop () {
-    hardware_command_movement (STOP);
+    hardware_command_movement (HARDWARE_MOVEMENT_STOP);
     clear_all (); //mulighet for å ta denne ut av funksjonen og sette inn etter (for clean slate)
     hardware_command_stop_light (1);
     if (get_current_floor!=-1) {
@@ -17,7 +17,7 @@ void emergency_stop () {
     
 }
 
-int get_current_floor {
+int get_current_floor () {
     if (io_read_bit(SENSOR_FLOOR1))
         return 0;
     else if (io_read_bit(SENSOR_FLOOR2))

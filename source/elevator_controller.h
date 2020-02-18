@@ -7,7 +7,6 @@
 #include "timer.h"
 #include "hardware.h"
 #include "queue.h"
-#include "channels.h"
 
 
 typedef enum {
@@ -44,5 +43,5 @@ void elevator_controller ();
 
 
 
-#endif // #ifndef __INCLUDE_TIMER_H__
+#endif // #ifndef __INCLUDE_ELEVATOR_CONTROLLER_H__
 

@@ -192,7 +192,7 @@ void hardware_command_order_light(int floor, HardwareOrder order_type, int on){
     }
 }
 
-static void clear_all_order_lights(){
+void clear_all_order_lights(){
     HardwareOrder order_types[3] = {
         HARDWARE_ORDER_UP,
         HARDWARE_ORDER_INSIDE,

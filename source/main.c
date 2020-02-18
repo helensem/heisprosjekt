@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <signal.h>
 #include "hardware.h"
-
+#include "timer.h"
+#include <unistd.h>
 
 
 static void sigint_handler(int sig){
@@ -26,13 +27,15 @@ int main(){
 
     hardware_command_movement(HARDWARE_MOVEMENT_UP);
 
+    printf("Hei");
+
     while(1){
         if(hardware_read_stop_signal()){
             hardware_command_movement(HARDWARE_MOVEMENT_STOP);
             break;
         }
 
-
+printf("Gortsatt i while");
 
         if(hardware_read_floor_sensor(0)){
             hardware_command_movement(HARDWARE_MOVEMENT_UP);
@@ -45,6 +48,17 @@ int main(){
         for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
             if(hardware_read_floor_sensor(f)){
                 hardware_command_floor_indicator_on(f);
+                printf("Steg 1");
+                hardware_command_movement(HARDWARE_MOVEMENT_STOP);
+                printf("Steg 2");
+                hardware_command_door_open(1);
+                printf("Steg 3");
+                
+                if (check_timer()){
+                printf("Steg 4");
+                hardware_command_door_open(0);
+                hardware_command_movement(HARDWARE_MOVEMENT_UP);
+                }
             }
         }
 
@@ -68,7 +82,6 @@ int main(){
 
         if(hardware_read_obstruction_signal()){
             hardware_command_stop_light(1);
-            clear_all_order_lights();
         }
         else{
             hardware_command_stop_light(0);
