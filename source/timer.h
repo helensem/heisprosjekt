@@ -2,16 +2,31 @@
 #ifndef __INCLUDE_TIMER_H__
 #define __INCLUDE_TIMER_H__
 
-#include <time.h>
+
+#include <stdio.h>
+#include <stdbool.h>
+
+
 
 
 /**
- countdown timer from 3 seconds to 0
+ Sets up an initial timer
  */
+void timer_init( void );
 
-_Bool check_timer();
+
+/**
+ Starts the timer
+ */
+void startTimer( void );
+
+/**
+ checks if timer is done
+ @return 1 if timer is done, 0 otherwise
+ */
+_Bool check_timer( void );
+
 
 
 
 #endif // #ifndef __INCLUDE_TIMER_H__
-

@@ -4,12 +4,12 @@
 
 void addRequest(int floor, HardwareOrder button) {
     if (hardware_read_order(floor, button)){
-        requests [floor-1][button] = 1;
+        requests [floor][button] = 1;
     }
 }
 
 int getRequest(int floor, HardwareOrder button) {
-    return requests [floor-1][button];
+    return requests [floor][button];
 }
 
 int getNextRequest(int current_floor, HardwareMovement dir){
@@ -18,13 +18,13 @@ int getNextRequest(int current_floor, HardwareMovement dir){
     if (run_count < 2) {
     switch (dir) {
         case HARDWARE_MOVEMENT_UP:
-            while (next_floor < N_FLOORS + 1 ) {
+            if (next_floor < N_FLOORS) {
                 next_floor++;
-                if (requests [next_floor-1][HARDWARE_ORDER_UP]==1||requests[next_floor-1][HARDWARE_ORDER_INSIDE] ==1){
+                if (requests [next_floor][HARDWARE_ORDER_UP]==1||requests[next_floor][HARDWARE_ORDER_INSIDE] ==1){
                     run_count = 0;
                     return next_floor;
                 }
-                if (next_floor > 3){
+                if (next_floor > 2){
                     run_count ++;
                     getNextRequest (current_floor, HARDWARE_MOVEMENT_DOWN);
                 }
@@ -32,13 +32,13 @@ int getNextRequest(int current_floor, HardwareMovement dir){
             break;
             
         case HARDWARE_MOVEMENT_DOWN:
-            while (next_floor > 0) {
+            if (next_floor => 0) {
                 next_floor--;
                 if (requests [next_floor-1][HARDWARE_ORDER_DOWN]==1||requests[next_floor-1][HARDWARE_ORDER_INSIDE] ==1){
                     run_count = 0;
                 return next_floor;
             }
-                if (next_floor <= 1){
+                if (next_floor = 0){
                     run_count ++;
                     getNextRequest (current_floor, HARDWARE_MOVEMENT_UP);
                 }
@@ -51,9 +51,9 @@ int getNextRequest(int current_floor, HardwareMovement dir){
 }
 
 void removeRequest(int floor) {
-    requests [floor-1][HARDWARE_ORDER_UP] = 0;
-    requests [floor-1][HARDWARE_MOVEMENT_DOWN]= 0;
-    requests [floor-1][HARDWARE_ORDER_INSIDE] = 0;
+    requests [floor][HARDWARE_ORDER_UP] = 0;
+    requests [floor][HARDWARE_MOVEMENT_DOWN]= 0;
+    requests [floor][HARDWARE_ORDER_INSIDE] = 0;
     
 
 

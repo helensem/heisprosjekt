@@ -3,22 +3,23 @@
 #define __INCLUDE_TIMER_H__
 
 #include <stdio.h>
-// To use time library of C
 #include <time.h>
 #include "timer.h"
 
-static time_t start = time (NULL);
-int run_time = 3; 
 
+static clock_t timeout_time;
 
-_Bool check_timer(){
-    if (time (NULL) == start + run_time) {
-        return 1;}
-return 0;
+void timer_init(void) {
+    timeout_time = 0;
+}
+
+void startTimer(void) {
+    timeout_time = clock() + 3 * CLOCKS_PER_SEC;
+}
+
+_Bool check_timer(void) {
+    return (clock() >= timeout_time);
 }
 
 
-
 #endif // #ifndef __INCLUDE_TIMER_H__
-
-
