@@ -3,16 +3,14 @@
 #include "queue.h"
 
 void addRequest(int floor, HardwareOrder button) {
-    if (hardware_read_order(floor, button)){
         requests [floor][button] = 1;
-    }
 }
 
-int getRequest(int floor, HardwareOrder button) {
+bool getRequest(int floor, HardwareOrder button) {
     return requests [floor][button];
 }
 
-int getNextRequest(int current_floor, HardwareMovement dir){
+int getNextRequest(int &current_floor, HardwareMovement &dir){
     int next_floor = current_floor;
     int run_count = 0;
     if (run_count < 2) {
@@ -20,7 +18,7 @@ int getNextRequest(int current_floor, HardwareMovement dir){
         case HARDWARE_MOVEMENT_UP:
             if (next_floor < N_FLOORS) {
                 next_floor++;
-                if (requests [next_floor][HARDWARE_ORDER_UP]==1||requests[next_floor][HARDWARE_ORDER_INSIDE] ==1){
+                if (requests [next_floor][HARDWARE_ORDER_UP]==1||requests[next_floor][HARDWARE_ORDER_INSIDE] ==1 || requests [next_floor][HARDWARE_ORDER_DOWN])==1{
                     run_count = 0;
                     return next_floor;
                 }

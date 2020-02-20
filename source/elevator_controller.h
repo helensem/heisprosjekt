@@ -1,4 +1,7 @@
 
+/**
+ @brief Runs the state machine and is the overall brain of the elevator
+ */
 #ifndef ELEVATOR_CONTROLLER_H__
 #define ELEVATOR_CONTROLLER_H__
 

@@ -13,6 +13,11 @@ static void sigint_handler(int sig){
 }
 
 int current_floor;
+int next_floor;
+int dir;
+
+//legg inn global variabel direction
+//legg inn at heisen må flytte seg til en etasje for å få state idle 
 
 int main(){
     int error = hardware_init();

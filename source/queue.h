@@ -31,7 +31,7 @@ void addRequest(int floor, HardwareOrder button);
  @return 1 if the order is requested, 0 if not active
  */
 
-int getRequest(int floor, HardwareOrder button);
+bool getRequest(int floor, HardwareOrder button);
 
 
 /**
@@ -41,7 +41,7 @@ int getRequest(int floor, HardwareOrder button);
  @return the next floor
  */
 
-int getNextRequest(int current_floor, HardwareMovement dir);
+int getNextRequest(int &current_floor, HardwareMovement &dir);
 
 
 
@@ -50,7 +50,7 @@ int getNextRequest(int current_floor, HardwareMovement dir);
  @param floor, the requested floor
  @param button, what typed of request we want
  */
-void removeRequest(int floor, HardwareMovement dir);
+void removeRequest(int floor);
 
 /**
  removes all the requests
