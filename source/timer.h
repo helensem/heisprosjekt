@@ -9,22 +9,17 @@
 
 
 
-/**
- Sets up an initial timer
- */
-void timer_init( void );
-
 
 /**
  Starts the timer
  */
-void startTimer( void );
+void startTimer( );
 
 /**
  checks if timer is done
  @return 1 if timer is done, 0 otherwise
  */
-_Bool check_timer( void );
+bool check_timer();
 
 
 

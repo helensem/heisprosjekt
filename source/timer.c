@@ -6,19 +6,17 @@
 #include <time.h>
 #include "timer.h"
 
+time_t start_time;
+time_t end_time;
 
-static clock_t timeout_time;
-
-void timer_init(void) {
-    timeout_time = 0;
-}
 
 void startTimer(void) {
-    timeout_time = clock() + 3 * CLOCKS_PER_SEC;
+    start_time = time (NULL);
 }
 
-_Bool check_timer(void) {
-    return (clock() >= timeout_time);
+bool check_timer(void) {
+    end_time = time (NULL);
+    return ((end_time - start_time) => 3);
 }
 
 

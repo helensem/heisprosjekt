@@ -9,7 +9,7 @@
 
 //legg inn enda mer sikkerhet 
 
-
+state current_state;
 
 int get_current_floor () {
     if (io_read_bit(SENSOR_FLOOR1))
@@ -24,12 +24,11 @@ int get_current_floor () {
         return -1;
 }
 
-int current_floor = get_current_floor ();
-int next_floor = getNextRequest (current_floor, HARDWARE_MOVEMENT_UP);
+
 //usikker på om globale variabler her eller i main. Må det referanse på disse?
 
 
-void emergency_stop () {
+void emergency_stop (&current_floor) {
     hardware_command_movement (HARDWARE_MOVEMENT_STOP);
     clear_all_order_lights();
     clear_all (); //mulighet for å ta denne ut av funksjonen og sette inn etter (for clean slate)
@@ -59,6 +58,9 @@ void idle () {
         }
         if (next_floor == current_floor) {
             current_state = DOOR_OPENED;
+        }
+        if (next_floor == -1) {
+            current_state = IDLE;
         }
     }
     if (hardware_read_stop_signal) {
@@ -92,7 +94,7 @@ void door_opening () {
 
 void moving_up () {
     hardware_command_movement (HARDWARE_MOVEMENT_UP);
-    if (hardware_read_floor_sensor(next_floor) && (getRequest(next_floor,HARDWARE_ORDER_DOWN)||getRequest(next_floor,HARDWARE_ORDER_INSIDE)|| getRequest (next_floor, HARDWARE_MOVEMENT_UP)) {
+    if (hardware_read_floor_sensor(next_floor)) {
         current_state = DOOR_OPENED; 
     } 
     if (hardware_read_floor_sensor(3)&& requests [3][HARDWARE_ORDER_DOWN]==0 &&requests [3][HARDWARE_ORDER_INSIDE]==0 ) {
@@ -105,7 +107,7 @@ void moving_up () {
 
 void moving_down () {
   hardware_command_movement (HARDWARE_MOVEMENT_DOWN);
-    if (hardware_read_floor_sensor(next_floor) && (getRequest(next_floor,HARDWARE_ORDER_DOWN)||getRequest(next_floor,HARDWARE_ORDER_INSIDE)|| getRequest (next_floor, HARDWARE_MOVEMENT_UP)) {
+    if (hardware_read_floor_sensor(next_floor) {
         current_state = DOOR_OPENED; 
     } 
     if (hardware_read_floor_sensor(0)&& requests [0][HARDWARE_ORDER_UP]==0 && requests [0][HARDWARE_ORDER_INSIDE]==0 ) {

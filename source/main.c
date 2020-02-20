@@ -3,6 +3,9 @@
 #include <signal.h>
 #include "hardware.h"
 #include <unistd.h>
+#include "queue.h"
+#include "elevator_controller.h"
+#include "timer.h"
 
 
 static void sigint_handler(int sig){
@@ -12,9 +15,6 @@ static void sigint_handler(int sig){
     exit(0);
 }
 
-int current_floor;
-int next_floor;
-int dir;
 
 //legg inn global variabel direction
 //legg inn at heisen må flytte seg til en etasje for å få state idle 
@@ -28,60 +28,33 @@ int main(){
 
     signal(SIGINT, sigint_handler);
 
-    printf("=== Example Program ===\n");
-    printf("Press the stop button on the elevator panel to exit\n");
+    printf("Elevator starting");
+    
+    
 
     hardware_command_movement(HARDWARE_MOVEMENT_UP);
-
-    printf("Hei");
+    
+    state elevator_state = IDLE;
 
     while(1){
-        if(hardware_read_stop_signal()){
-            hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-            break;
-        }
-
-        if(hardware_read_floor_sensor(0)){
-            hardware_command_movement(HARDWARE_MOVEMENT_UP);
-        }
-        if(hardware_read_floor_sensor(HARDWARE_NUMBER_OF_FLOORS - 1)){
-            hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
-        }
-
-        /* All buttons must be polled, like this: */
+        
+        int elevator_floor = get_current_floor ();
+        int elev_next_floor = getNextRequest (current_floor, HARDWARE_MOVEMENT_UP);
+        
+        
         for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
             if(hardware_read_floor_sensor(f)){
                 hardware_command_floor_indicator_on(f);
-                current_floor = f; 
-                printf ("current floor is %d\n", current_floor);
-            } 
-        }
-
-        /* Lights are set and cleared like this: */
-        for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
-            /* Internal orders */
-            if(hardware_read_order(f, HARDWARE_ORDER_INSIDE)){
-                hardware_command_order_light(f, HARDWARE_ORDER_INSIDE, 1);
-            }
-
-            /* Orders going up */
-            if(hardware_read_order(f, HARDWARE_ORDER_UP)){
-                hardware_command_order_light(f, HARDWARE_ORDER_UP, 1);
-            }
-
-            /* Orders going down */
-            if(hardware_read_order(f, HARDWARE_ORDER_DOWN)){
-                hardware_command_order_light(f, HARDWARE_ORDER_DOWN, 1);
             }
         }
+        
+        
+        elevator_controller (elevator_state);
+        request_control ();
 
-        if(hardware_read_obstruction_signal()){
-            hardware_command_stop_light(1);
-        }
-        else{
-            hardware_command_stop_light(0);
-        }
-    }
+
+        /* All buttons must be polled, like this: */
+       
 
     return 0;
 }
