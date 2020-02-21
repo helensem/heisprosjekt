@@ -2,65 +2,59 @@
 
 #include "queue.h"
 
-void addRequest(int floor, HardwareOrder button) {
-        requests [floor][button] = 1;
-}
+//lage egen array for down og up orders med N_FLOORS
 
-bool getRequest(int floor, HardwareOrder button) {
-    return requests [floor][button];
-}
+static int up_orders [N_FLOORS];
+static int down_orders [N_FLOORS];
 
-int getNextRequest(int &current_floor, HardwareMovement &dir){
-    int next_floor = current_floor;
-    int run_count = 0;
-    if (run_count < 2) {
-    switch (dir) {
-        case HARDWARE_MOVEMENT_UP:
-            if (next_floor < N_FLOORS) {
-                next_floor++;
-                if (requests [next_floor][HARDWARE_ORDER_UP]==1||requests[next_floor][HARDWARE_ORDER_INSIDE] ==1 || requests [next_floor][HARDWARE_ORDER_DOWN])==1{
-                    run_count = 0;
-                    return next_floor;
-                }
-                if (next_floor > 2){
-                    run_count ++;
-                    getNextRequest (current_floor, HARDWARE_MOVEMENT_DOWN);
-                }
-            }
-            break;
-            
-        case HARDWARE_MOVEMENT_DOWN:
-            if (next_floor => 0) {
-                next_floor--;
-                if (requests [next_floor-1][HARDWARE_ORDER_DOWN]==1||requests[next_floor-1][HARDWARE_ORDER_INSIDE] ==1){
-                    run_count = 0;
-                return next_floor;
-            }
-                if (next_floor = 0){
-                    run_count ++;
-                    getNextRequest (current_floor, HARDWARE_MOVEMENT_UP);
-                }
-            }
-            
-            break;
-       }
+
+void add_order(int floor, HardwareOrder button) {
+    if (button == HARDWARE_ORDER_INSIDE) {
+        up_orders [floor] = 1;
+        down_orders [floor] = 1;
     }
-    return -1;
+    else if (button==HARDWARE_ORDER_UP) {
+        up_orders [floor] = 1;
+    }
+    else if (button == HARDWARE_ORDER_DOWN) {
+        down_orders [floor] = 1;
+    }
 }
 
-void removeRequest(int floor) {
-    requests [floor][HARDWARE_ORDER_UP] = 0;
-    requests [floor][HARDWARE_MOVEMENT_DOWN]= 0;
-    requests [floor][HARDWARE_ORDER_INSIDE] = 0;
-    
+
+
+//fuck me, gjør den enkler for gad dammit.
+void get_next_order (int floor, Direction dir, int *p_next_floor) {
+    if (dir == UP) {
+        for (int f = floor; f < N_FLOORS; f++) {
+            if (up_orders [floor]) {
+                *p_next_floor = f;
+                return;
+            }
+        }
+    }
+    if (dir == DOWN) {
+        for (int f = floor; f>=0; f--) {
+            if (down_orders [f]) {
+                *p_next_floor=f;
+                return;
+            }
+        }
+    }
+}
+
+
+void remove_order(int floor) {
+    up_orders [floor]=0;
+    down_orders [floor]=0;
+}
 
 
 
-void clear_all () {
-    for (int i = 0, i < 4; i++){
-        requests [i][HARDWARE_ORDER_UP] = 0;
-        requests [i][HARDWARE_MOVEMENT_DOWN]= 0;
-        requests [i][HARDWARE_ORDER_INSIDE] = 0;
+void clear_all() {
+    for (int f = 0, f < N_FLOORS; f++){
+        up_orders [f] = 0;
+        down_orders [f] = 0;
     }
 }
 

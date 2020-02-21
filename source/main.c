@@ -30,17 +30,37 @@ int main(){
 
     printf("Elevator starting");
     
+    current_stare = IDLE;
     
 
-    hardware_command_movement(HARDWARE_MOVEMENT_UP);
+    hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
+    dir = DOWN;
+    int floor = -1;
+    while (floor==-1) {
+        floor = get_current_floor ();
+    }
+    hardware_command_movement (HARDWARE_MOVEMENT_STOP);
+    current_floor.floor = floor;
+    current_floor.above = 0;
     
-    state elevator_state = IDLE;
+    
+   /* static int m_global;
+    void update_int (int *p_m_global) {
+        *p_m = tall;
+    }
+    
+    update_int (&m_global);*/
+    
+    //få inn pekere :)
+    
 
     while(1){
+        floor = get_current_floor ();
+        if (floor != -1) {
+            current_floor = floor;
+        }
         
-        int elevator_floor = get_current_floor ();
-        int elev_next_floor = getNextRequest (current_floor, HARDWARE_MOVEMENT_UP);
-        
+        get_next_order (&next_floor);
         
         for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
             if(hardware_read_floor_sensor(f)){
@@ -49,7 +69,7 @@ int main(){
         }
         
         
-        elevator_controller (elevator_state);
+        elevator_controller (current_state);
         request_control ();
 
 

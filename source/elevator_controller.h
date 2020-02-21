@@ -5,12 +5,19 @@
 #ifndef ELEVATOR_CONTROLLER_H__
 #define ELEVATOR_CONTROLLER_H__
 
-#include "channels.h"
-#include "io.h"
 #include "timer.h"
 #include "hardware.h"
 #include "queue.h"
 
+typedef enum {
+    DOWN,
+    UP
+} Direction;
+
+typedef struct {
+    int floor;
+    int above;
+} Floor
 
 typedef enum {
     IDLE,
@@ -21,37 +28,35 @@ typedef enum {
 } state;
 
 
-state current_state;
-
 /**
  @brief Function related to the emergency stop button. Clears all requests and stops the elevator.
  */
 
-void emergency_stop (int current_floor);
+void emergency_stop ();
 
 /**
  @brief Function related to the idle state. Looks for new requests, our first state
  @param elevators current floor 
  */
-void idle (int current_floor);
+void idle ();
 
 /**
  @brief Function related to the opened door state. 
  @param elevators current floor 
  */
-void door_opening (int current_floor);
+void door_opening ();
 
 /**
  @brief Function related to when the elevator is moving upwards. 
  @param elevators current floor 
  */
-void moving_up (int current_floor);
+void moving_up ();
 
 /**
  @brief Function related to when the elevator is moving downwards. 
  @param elevators current floor 
  */
-void moving_down (int current_floor);
+void moving_down ();
 
 
 
@@ -66,7 +71,7 @@ int get_current_floor ();
 
 
 /**
- General function for the elevator
+ @brief General function for the elevator
  */
 
 void elevator_controller ();

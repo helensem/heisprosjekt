@@ -9,51 +9,35 @@
 #define N_BUTTONS 3
 
 
-//Lager matrix for hver type bestilling. 4 etasjer og 3 ulike bstillinger
-//settes til en om aktiv bestilling og 0 om fullført/ingen aktiv bestilling
-static int requests = [N_FLOORS]*[N_BUTTONS];
-
-
 
 /**
-  We add a request to the queue AKA set the requested floor and order to 1
+  @brief We add a request to the queue AKA set the requested floor and order to 1
   @param floor, the requested floor
   @param button, what typed of request we want
 */
 
-void addRequest(int floor, HardwareOrder button);
+void add_order(int floor, HardwareOrder button);
 
 
 /**
- Check if we have the requested floor
- @param floor, the requested floor
- @param button, what typed of request we want
- @return 1 if the order is requested, 0 if not active
- */
-
-bool getRequest(int floor, HardwareOrder button);
-
-
-/**
- A magic algoritm to find the next request that is making sense for the elevator
+ @brief checks the arrays to find the next request that is making sense for the elevator
  @param current_floor, where the elevator is
  @param dir, the direction of the elevator
- @return the next floor
+ @param p_next_floor, a pointer to the next floor
  */
 
-int getNextRequest(int &current_floor, HardwareMovement &dir);
+int get_next_order(int current_floor, Direction dir, int *p_next_floor);
 
 
 
 /**
- remove the requests as we move through them AKA set the request to 0
+ @brief remove the requests as we move through them AKA set the request to 0
  @param floor, the requested floor
- @param button, what typed of request we want
  */
-void removeRequest(int floor);
+void remove_order(int floor);
 
 /**
- removes all the requests
+ @brief removes all the order
  */
 void clear_all();
 

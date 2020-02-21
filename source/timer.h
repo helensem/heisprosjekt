@@ -1,3 +1,6 @@
+/**
+ @brief timer functions
+ */
 
 #ifndef __INCLUDE_TIMER_H__
 #define __INCLUDE_TIMER_H__
@@ -7,19 +10,16 @@
 #include <stdbool.h>
 
 
-
-
-
 /**
- Starts the timer
+ @brief Starts the timer
  */
-void startTimer( );
+void start_timer( );
 
 /**
- checks if timer is done
+ @brief checks if timer is done by checking the difference between passed time and start time
  @return 1 if timer is done, 0 otherwise
  */
-bool check_timer();
+int check_timer();
 
 
 
