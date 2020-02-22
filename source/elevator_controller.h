@@ -9,15 +9,19 @@
 #include "hardware.h"
 #include "queue.h"
 
-typedef enum {
+typedef enum { //også litt usikker på hvor det er best å putte disse 
     DOWN,
     UP
 } Direction;
+//enum for direction til heisen, denne er kun nødvendig å vite iforhold til om heisen skal betjene down-orders eller up-orders.
+
 
 typedef struct {
     int floor;
     int above;
 } Floor
+//Struct for heisens nåværende etasje. Dersom heisen er i bevegelse, settes above til 1 (heisen er over floor) Dette er greit å vite om vi stopper midt mellom etasjer.
+
 
 typedef enum {
     IDLE,
@@ -26,6 +30,8 @@ typedef enum {
     STOP,
     DOOR_OPENED,
 } state;
+
+//enum for state til heisen
 
 
 /**

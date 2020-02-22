@@ -68,9 +68,32 @@ int main(){
             }
         }
         
-        
-        elevator_controller (current_state);
         request_control ();
+        
+        switch (current_state) {
+            case IDLE:
+                idle();
+                break;
+            case STOP:
+                emergency_stop ();
+                //clear_all ();  alternativ til at den ikke tar inn noen ordre mens i stop
+                //clear_all_order_lights ();
+                break;
+            case DOOR_OPENED:
+                door_opening ();
+                break;
+            case MOVING_UP:
+                moving_up ();
+                break;
+            case MOVING_DOWN:
+                moving_down ();
+                break;
+            default:
+                break;
+        }
+        
+    }
+    
 
 
         /* All buttons must be polled, like this: */

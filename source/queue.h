@@ -37,9 +37,9 @@ int get_next_order(int current_floor, Direction dir, int *p_next_floor);
 void remove_order(int floor);
 
 /**
- @brief removes all the order
+ @brief removes all the orders
  */
-void clear_all();
+void clear_all_requests();
 
 
 #endif // #ifndef __INCLUDE_QUEUE_H__
