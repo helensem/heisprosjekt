@@ -1,20 +1,18 @@
 
-#ifndef __INCLUDE_ELEVATOR_CONTROLLER_H__
-#define __INCLUDE_ELEVATOR_CONTROLLER_H__
 
 #include <stdio.h>
 #include "elevator_controller.h"
 #include <unistd.h>
-#include "hardware.h"
+#include "queue.h"
+
+
 
 //legg inn enda mer sikkerhet
 
 //Dersom structene og enumene skal brukes i main av globale variabler, må de i header-fil eller c fila?
 
 //globale variabler for heisens state
-static state current_state;
-static Floor current_floor;
-static Direction current_dir //vet ikke hvor jeg skal putte diise (main?)
+ //vet ikke hvor jeg skal putte diise (main?)
 
 int get_current_floor() {
     if (io_read_bit(SENSOR_FLOOR1))
@@ -35,7 +33,7 @@ int get_current_floor() {
 void emergency_stop() {                                     //tilhørende til STOP state, altså emergency-stop kun (vanlig stopp på etasjer er i DOOR_OPENED).
     hardware_command_movement (HARDWARE_MOVEMENT_STOP); //MOTOREN STOPPES
     clear_all_order_lights();
-    clear_all_orders (); //mulighet for å ta denne ut av funksjonen og sette inn etter (for clean slate)
+ //mulighet for å ta denne ut av funksjonen og sette inn etter (for clean slate)
     //LEGGE INN NOE HER FOR AT HEISEN IKKE SKAL TA INN BESTILLINGER
     
     hardware_command_stop_light (1); //LYSET SLÅR SEG PÅ
@@ -54,21 +52,21 @@ void emergency_stop() {                                     //tilhørende til ST
     
 }
 
-void idle () {   //Funskjon tilhørende idle state. Start-tilstand til heisen. Heisen er i ro og leter etter bestillinger, og bestemmer om den skal kjøre opp, ned eller forbli i ro
-    if (hardware_read_stop_signal) {  //ALLTID HA EN READ_STOP I ALLE TILSTANDER
-        current_state = STOP;
+void idle () {  //Funskjon tilhørende idle state. Start-tilstand til heisen. Heisen er i ro og leter etter bestillinger, og bestemmer om den skal kjøre opp, ned eller forbli i ro
+    if (hardware_read_stop_signal()) {  //ALLTID HA EN READ_STOP I ALLE TILSTANDER
+        current_state = STOPPING;
         return;
     }
     hardware_command_movement (HARDWARE_MOVEMENT_STOP); //MOTOREN MÅ STOPPES SÅNN I TILFELLE
     if (next_floor < current_floor.floor){ //DERSOM NEXT_FLOOR ER UNDER CURRENT_FLOOR, SKAL HEISEN KJØRE NED
         current_floor.floor--;
         current_floor.above = 1;   //LEGG OGSÅ MERKE TIL AT CURRENT_FLOOR DEKREMENTERES OG ABOVE SETTER TIL 1, FORDI DA ER VI JO OVER ETASJEN UNDER, BASICALLY
-        dir = DOWN; //DIRECTION MÅ SETTES NED
+        current_dir = DOWN; //DIRECTION MÅ SETTES NED
         current_state = MOVING_DOWN;  //ALT DETTE KAN TEKNISK SETTES INN I MOVING_DOWN, MEN DET ER VEL LITT HIPP SOM HAPP (håper jeg)
         return;
     }
     else if (next_floor > current_floor.floor) { //SAME PROCEDURE, BARE AT NEXT_FLOOR ER OVER, OG VI FLYTTER OSS OPP
-        dir = UP;
+        current_dir = UP;
         current_floor.above = 1;
         current_state = MOVING_UP;
         return;//sett inn return hver gang du switcher state, for å slippe at funksjonen fortsetter nedover
@@ -87,7 +85,7 @@ void door_opening () { //FUNKSJON TIL DOOR OPENING
     hardware_command_door_open (1); //DØREN ÅPNER SEG
     remove_order (current_floor.floor);
     if (hardware_read_stop_signal()) { //stop må som vanlig være her
-        current_state = STOP;
+        current_state = STOPPING;
         return;
     }
     if (!hardware_read_obstruction_signal ()){  //litt usikker på om dette vil funke riktig :) basically hvis obstruksjon ikke leses, så fortsetter vi sånn vi vil fortsette som vanlig
@@ -109,53 +107,25 @@ void moving_up () {
     if (hardware_read_floor_sensor(next_floor)) { //Vi beveger oss opp til vi finner next floor
         current_state = DOOR_OPENED;
         return;
-    } 
-    if (hardware_read_floor_sensor(3)&& down_orders[3]==0 ) { //Denne her skal egentlig være sikkerhet for at heisen ikke beveger seg over 4 etg, litt usikker på om det kommer til å funke
-        current_state = IDLE;
-        return;
     }
     if (hardware_read_stop_signal ()) {
-        current_state = STOP;
+        current_state = STOPPING;
         return;
     }
 }
 
 void moving_down () { //same as ususal 
     hardware_command_movement (HARDWARE_MOVEMENT_DOWN);
-    if (hardware_read_floor_sensor(next_floor) {
+    if (hardware_read_floor_sensor(next_floor)) {
         current_state = DOOR_OPENED;
         return;
     } 
-    if (hardware_read_floor_sensor(0)&& up_orders [0] ==0) {
-        current_state = IDLE;
-        return;
-    }
     if (hardware_read_stop_signal ()) {
-        current_state = STOP;
+        current_state = STOPPING;
         return;
     }  
 }
 
-void request_control (){    //Brukte eksempelet i main til å lage
-    for(int f = 0; f < N_FLOORS; f++){
-        /* Internal orders */
-        if(hardware_read_order(f, HARDWARE_ORDER_INSIDE)){
-            hardware_command_order_light(f, HARDWARE_ORDER_INSIDE, 1);
-            add_order(f, HARDWARE_ORDER_INSIDE);
-        }
-        
-        /* Orders going up */
-        if(hardware_read_order(f, HARDWARE_ORDER_UP)){
-            hardware_command_order_light(f, HARDWARE_ORDER_UP, 1);
-            add_order(f, HARDWARE_ORDER_UP);
-        }
-        
-        /* Orders going down */
-        if(hardware_read_order(f, HARDWARE_ORDER_DOWN)){
-            hardware_command_order_light(f, HARDWARE_ORDER_DOWN, 1);
-            add_order(f, HARDWARE_ORDER_DOWN);
-        }
-    }
 
 
 
@@ -164,9 +134,5 @@ void request_control (){    //Brukte eksempelet i main til å lage
 
 
 
-
-
-
-#endif // #ifndef __INCLUDE_ELEVATOR_CONTROLLER_H__
 
 

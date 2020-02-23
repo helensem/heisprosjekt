@@ -3,12 +3,14 @@
 #define __INCLUDE_QUEUE_H__
 
 #include "hardware.h"
+#include "elevator_controller.h"
 
 
 #define N_FLOORS 4
 #define N_BUTTONS 3
 
-
+extern int up_orders [N_FLOORS];
+extern int down_orders [N_FLOORS];
 
 /**
   @brief We add a request to the queue AKA set the requested floor and order to 1
@@ -26,7 +28,7 @@ void add_order(int floor, HardwareOrder button);
  @param p_next_floor, a pointer to the next floor
  */
 
-int get_next_order(int current_floor, Direction dir, int *p_next_floor);
+void get_next_order(int current_floor, Direction dir, int *p_next_floor);
 
 
 
@@ -39,7 +41,7 @@ void remove_order(int floor);
 /**
  @brief removes all the orders
  */
-void clear_all_requests();
+void clear_all_orders();
 
 
 #endif // #ifndef __INCLUDE_QUEUE_H__

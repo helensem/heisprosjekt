@@ -7,7 +7,8 @@
 
 #include "timer.h"
 #include "hardware.h"
-#include "queue.h"
+#include "driver/io.h"
+#include "driver/channels.h"
 
 typedef enum { //også litt usikker på hvor det er best å putte disse 
     DOWN,
@@ -19,17 +20,31 @@ typedef enum { //også litt usikker på hvor det er best å putte disse
 typedef struct {
     int floor;
     int above;
-} Floor
-//Struct for heisens nåværende etasje. Dersom heisen er i bevegelse, settes above til 1 (heisen er over floor) Dette er greit å vite om vi stopper midt mellom etasjer.
+} Floor;
 
 
 typedef enum {
     IDLE,
     MOVING_UP,
     MOVING_DOWN,
-    STOP,
-    DOOR_OPENED,
-} state;
+    STOPPING,
+    DOOR_OPENED
+} State;
+
+extern State current_state;
+extern  Floor current_floor;
+extern  Direction current_dir;
+extern  int next_floor;
+
+/**
+ @brief Function that knows which floor the elevator is currently in
+ @return current floor, -1 if error.
+ */
+
+int get_current_floor ();
+
+    
+
 
 //enum for state til heisen
 
@@ -67,25 +82,6 @@ void moving_down ();
 
 
 
-/**
- @brief Function that knows which floor the elevator is currently in
- @return current floor, -1 if error.
- */
-
-int get_current_floor ();
-
-
-
-/**
- @brief General function for the elevator
- */
-
-void elevator_controller ();
-
-/** 
- * @brief when an order button is pressed, it is added to the queue 
- */
-void request_control ()
 
 #endif // #ifndef __INCLUDE_ELEVATOR_CONTROLLER_H__
 
