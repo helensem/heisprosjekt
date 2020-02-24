@@ -1,7 +1,6 @@
 
 
 #include <stdio.h>
-#include <time.h>
 #include "timer.h"
 
 time_t start_time;

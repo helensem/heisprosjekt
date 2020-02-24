@@ -129,4 +129,11 @@ void hardware_command_order_light(int floor, HardwareOrder order_type, int on);
 
 void clear_all_order_lights();
 
+/**
+ @brief Function that knows which floor the elevator is currently in
+ @return current floor, -1 if error.
+ */
+
+int get_current_floor ();
+
 #endif

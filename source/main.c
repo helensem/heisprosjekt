@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
         }
         printf ("current floor is, %d\n", current_floor.floor);
         
-        get_next_order (current_floor.floor, current_dir, &next_floor);
+        get_next_order (&current_floor, &current_dir, &next_floor);
 
         printf ("next floor is %d\n",next_floor);
         
@@ -101,22 +101,21 @@ int main(int argc, char *argv[]){
        
         switch (current_state) {
             case IDLE:
-                printf ("we are in idle\n");
-                idle();
+                idle(&current_state, &current_dir, &current_floor, &next_floor);
                 break;
             case STOPPING:
-                emergency_stop ();
+                emergency_stop (&current_floor, &current_state);
                 clear_all_orders (); 
-                //clear_all_order_lights ();
+                clear_all_order_lights ();
                 break;
             case DOOR_OPENED:
-                door_opening ();
+                door_opening (&current_state, &current_floor);
                 break;
             case MOVING_UP:
-                moving_up ();
+                moving_up (&current_state);
                 break;
             case MOVING_DOWN:
-                moving_down ();
+                moving_down (&current_state);
                 break;
             default:
                 break;

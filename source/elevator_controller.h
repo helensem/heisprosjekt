@@ -7,10 +7,8 @@
 
 #include "timer.h"
 #include "hardware.h"
-#include "driver/io.h"
-#include "driver/channels.h"
 
-typedef enum { //også litt usikker på hvor det er best å putte disse 
+typedef enum { //også litt usikker på hvor det er best å putte disse
     DOWN,
     UP
 } Direction;
@@ -31,53 +29,45 @@ typedef enum {
     DOOR_OPENED
 } State;
 
-extern State current_state;
-extern  Floor current_floor;
-extern  Direction current_dir;
-extern  int next_floor;
-
-/**
- @brief Function that knows which floor the elevator is currently in
- @return current floor, -1 if error.
- */
-
-int get_current_floor ();
-
-    
-
-
 //enum for state til heisen
 
 
 /**
  @brief Function related to the emergency stop button. Clears all requests and stops the elevator.
+ @param p_current_floor, pointer to the struct of type floor, where the elevator is
+ @param p_current_state, pointer to our current state
  */
 
-void emergency_stop ();
+void emergency_stop(Floor *p_current_floor, State *p_current_state);
 
 /**
  @brief Function related to the idle state. Looks for new requests, our first state
- @param elevators current floor 
+ @param p_current_state, pointer to elevators current state
+ @param p_current_floor, pointer elevators current position
+ @param p_current_dir, pointer to elevators direction
+ @param p_next_floor, pointer to elevators next floor
  */
-void idle ();
+void idle (State *p_current_state, Direction *p_current_dir, Floor *p_current_floor, int *p_next_floor);
 
 /**
  @brief Function related to the opened door state. 
- @param elevators current floor 
+ @param p_current_state, pointer to elevators current state
+ @param p_current_floor, pointer to elevators current position
  */
-void door_opening ();
+void door_opening(State *p_current_state, Floor *p_current_floor);
 
 /**
  @brief Function related to when the elevator is moving upwards. 
- @param elevators current floor 
+ @param p_current_state, pointer to elevators current state
  */
-void moving_up ();
+void moving_up(State *p_current_state);
 
 /**
  @brief Function related to when the elevator is moving downwards. 
- @param elevators current floor 
+ @param p_current_state, pointer to elevators current srate
  */
-void moving_down ();
+
+void moving_down(State *p_current_state);
 
 
 

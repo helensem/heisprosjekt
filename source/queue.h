@@ -9,8 +9,6 @@
 #define N_FLOORS 4
 #define N_BUTTONS 3
 
-extern int up_orders [N_FLOORS];
-extern int down_orders [N_FLOORS];
 
 /**
   @brief We add a request to the queue AKA set the requested floor and order to 1
@@ -23,12 +21,12 @@ void add_order(int floor, HardwareOrder button);
 
 /**
  @brief checks the arrays to find the next request that is making sense for the elevator
- @param current_floor, where the elevator is
- @param dir, the direction of the elevator
+ @param p_current_floor, pointer to where the elevator is
+ @param p_current_dir, pointer to the direction of the elevator
  @param p_next_floor, a pointer to the next floor
  */
 
-void get_next_order(int current_floor, Direction dir, int *p_next_floor);
+void get_next_order(Floor *p_current_floor, Direction *p_current_dir, int *p_next_floor);
 
 
 
