@@ -72,6 +72,22 @@ int main(int argc, char *argv[]){
             if(hardware_read_floor_sensor(f)){
                 hardware_command_floor_indicator_on(f);
             }
+            if(hardware_read_order(f, HARDWARE_ORDER_INSIDE)){
+                hardware_command_order_light(f, HARDWARE_ORDER_INSIDE, 1);
+                add_order(f, HARDWARE_ORDER_INSIDE);
+            }
+            /* Orders going up */
+            else if(hardware_read_order(f, HARDWARE_ORDER_UP)){
+                hardware_command_order_light(f, HARDWARE_ORDER_UP, 1);
+                add_order(f, HARDWARE_ORDER_UP);
+            }
+            
+            /* Orders going down */
+            else if(hardware_read_order(f, HARDWARE_ORDER_DOWN)){
+                hardware_command_order_light(f, HARDWARE_ORDER_DOWN, 1);
+                add_order(f, HARDWARE_ORDER_DOWN);
+            }
+            /* Internal orders */
         }
 
         if (hardware_read_floor_sensor (0)){
@@ -82,39 +98,13 @@ int main(int argc, char *argv[]){
             current_dir = DOWN;
         }
 
-         for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
-             if(hardware_read_order(f, HARDWARE_ORDER_INSIDE)){
-                 hardware_command_order_light(f, HARDWARE_ORDER_INSIDE, 1);
-                 add_order(f, HARDWARE_ORDER_INSIDE);
-            
-             }
-             /* Orders going up */
-             if(hardware_read_order(f, HARDWARE_ORDER_UP)){
-                 hardware_command_order_light(f, HARDWARE_ORDER_UP, 1);
-                 add_order(f, HARDWARE_ORDER_UP);
-        
        
-             }
-        
-        /* Orders going down */
-             if(hardware_read_order(f, HARDWARE_ORDER_DOWN)){
-                 hardware_command_order_light(f, HARDWARE_ORDER_DOWN, 1);
-                 add_order(f, HARDWARE_ORDER_DOWN);
-             }
-        /* Internal orders */
-        
-         }
-
-
-       
-        switch (current_state) {
+        switch(current_state) {
             case IDLE:
                 idle(&current_state, &current_dir, &current_floor, &next_floor);
                 break;
             case STOPPING:
                 emergency_stop (&current_floor, &current_state);
-                clear_all_orders (); 
-                clear_all_order_lights ();
                 break;
             case DOOR_OPENED:
                 door_opening (&current_state, &current_floor);
@@ -128,8 +118,6 @@ int main(int argc, char *argv[]){
             default:
                 break;
         }
-        
-    }
     
 
 
