@@ -73,17 +73,13 @@ void door_opening(State *p_current_state, Floor *p_current_floor) { //FUNKSJON T
     hardware_command_order_light ((*p_current_floor).floor, HARDWARE_ORDER_DOWN, 0);
     hardware_command_door_open (1); //DØREN ÅPNER SEG
     remove_order ((*p_current_floor).floor);
-    if (hardware_read_stop_signal()) { //stop må som vanlig være her
+    if (hardware_read_stop_signal()) {
+        reset_timer();//stop må som vanlig være her
         (*p_current_state) = STOPPING;
         return;
     }
     //if (hardware_read_obstruction_signal ()){  //litt usikker på om dette vil funke riktig :) basically hvis obstruksjon ikke leses, så fortsetter vi sånn vi vil fortsette som vanlig
         //start_timer (); }
-    
-    if (hardware_read_obstruction_signal()){
-        start_timer();
-        break;
-    }
     if (check_timer()){ //hvis timeren er ferdig, så er vi tilbake på idle
             hardware_command_door_open (0);
             (*p_current_state) = IDLE;

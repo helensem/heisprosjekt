@@ -9,14 +9,18 @@
 #include <stdio.h>
 #include <time.h>
 
+/**
+ @brief resets the timer
+ */
+void reset_timer()
 
 /**
- @brief Starts the timer
+ @brief Sets the offset of the timer (start time)
  */
 void start_timer( );
 
 /**
- @brief checks if timer is done by checking the difference between passed time and start time
+ @brief checks if timer is done by checking the difference between passed time and start time, will reset if obstruction signal set. 
  @return 1 if timer is done, 0 otherwise
  */
 int check_timer();

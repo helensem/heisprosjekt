@@ -9,20 +9,24 @@
 //disse fungerere rett og slett litt enklere enn en matrise
 
 
-static int up_orders [N_FLOORS];
-static int down_orders [N_FLOORS];
+static int up_orders [HARDWARE_NUMBER_OF_FLOORS];
+static int down_orders [HARDWARE_NUMBER_OF_FLOORS];
 
 
 void add_order(int floor, HardwareOrder button) {
-    if (button == HARDWARE_ORDER_INSIDE) {  //En bestilling på innsiden kan legges inn i begge
-        up_orders[floor] = 1;
-        down_orders[floor] = 1;
-    }
-    else if (button==HARDWARE_ORDER_UP) {
-        up_orders[floor] = 1;
-    }
-    else if (button == HARDWARE_ORDER_DOWN) {
-        down_orders[floor] = 1;
+    switch (button) {
+        case HARDWARE_ORDER_INSIDE:
+            up_orders[floor] = 1;
+            down_orders[floor] = 1;
+            break;
+        case HARDWARE_ORDER_DOWN:
+            down_orders[floor] = 1;
+            break;
+        case HARDWARE_ORDER_UP:
+            up_orders[floor] = 1;
+            break;
+        default:
+            break;
     }
 }
 
@@ -82,7 +86,7 @@ void remove_order(int floor) {
 
 
 void clear_all_orders() {
-    for (int f = 0; f < N_FLOORS; f++){
+    for (int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
         up_orders [f] = 0;
         down_orders [f] = 0;
     }
