@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
 
     while(1){
         floor = get_current_floor ();
-        if (floor == current_floor.floor) {
+        if (floor != current_floor.floor) {
             current_floor.floor = floor;  //Dette bør fikse problemet med at current floor ikke blir -1.
             current_floor.above = 0;
         }
