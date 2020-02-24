@@ -46,7 +46,7 @@ void get_next_order(Floor *p_current_floor, Direction *p_current_dir, int *p_nex
         }
     }
     else {
-        *p_next_floor = floor;
+        *p_next_floor = (*p_current_floor).floor;
     }
 }
 

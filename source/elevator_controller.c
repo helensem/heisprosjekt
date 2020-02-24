@@ -13,18 +13,7 @@
 //globale variabler for heisens state
  //vet ikke hvor jeg skal putte diise (main?)
 
-int get_current_floor() {
-    if (io_read_bit(SENSOR_FLOOR1))
-        return 0;
-    else if (io_read_bit(SENSOR_FLOOR2))
-        return 1;
-    else if (io_read_bit(SENSOR_FLOOR3))
-        return 2;
-    else if (io_read_bit(SENSOR_FLOOR4))
-        return 3;
-    else
-        return -1;
-}
+
 
 //I elevator controller har vi rett og slett oversatt FSM-diagrammet til koden. I main vil vi finne en switch case for hver state. For hver state har vi en tilhørende funksjon. Der de første linjene for hver funksjon sier noe om hva som skal gjøres (stoppe motor, sette på lys, kjøre opp/ned f.eks) if-setningene er conditionene våre (eller pilene på FSM diagrammet) og hva som skal skje for at vi skal bytte state. Dermed vil heisen da hele tiden hoppe mellom de ulike statene (forhåpentligvis)
 
@@ -36,7 +25,7 @@ void emergency_stop(Floor *p_current_floor, State *p_current_state) {           
     //LEGGE INN NOE HER FOR AT HEISEN IKKE SKAL TA INN BESTILLINGER
     
     hardware_command_stop_light (1); //LYSET SLÅR SEG PÅ
-    if ((*current_floor).floor!=-1 && (*current_floor).above==0) {
+    if ((*p_current_floor).floor!=-1 && (*p_current_floor).above==0) {
         hardware_command_door_open (1);  //DERSOM VI ER PÅ EN ETASJE, SÅ SKAL DØREN ÅPNE SEG
         if (!hardware_read_stop_signal()) {  //DERSOM DØREN ER ÅPEN OG STOPSIGNALET BRYTES, SKAL VI TIL DOOR_OPENED
             (*p_current_state) = DOOR_OPENED;
@@ -69,7 +58,7 @@ void idle (State *p_current_state, Direction *p_current_dir, Floor *p_current_fl
         (*p_current_state) = MOVING_UP;
          return;//sett inn return hver gang du switcher state, for å slippe at funksjonen fortsetter nedover
     }
-    else if (next_floor == current_floor.floor){ //I FUNKSJONEN GET_NEXT_REQUEST VIL NEXT_FLOOR ALLTID SETTES TIL CURRENT_FLOOR DERSOM DET IKKE ER NOE BESTILLINGER, VI BLIR DER VI ER
+    else if ((*p_next_floor) == (*p_current_floor).floor){ //I FUNKSJONEN GET_NEXT_REQUEST VIL NEXT_FLOOR ALLTID SETTES TIL CURRENT_FLOOR DERSOM DET IKKE ER NOE BESTILLINGER, VI BLIR DER VI ER
         (*p_current_state) = IDLE;
         return;
     }
@@ -78,8 +67,8 @@ void idle (State *p_current_state, Direction *p_current_dir, Floor *p_current_fl
 void door_opening(State *p_current_state, Floor *p_current_floor) { //FUNKSJON TIL DOOR OPENING
     hardware_command_movement(HARDWARE_MOVEMENT_STOP); //STOPP HEISEN
     hardware_command_order_light((*p_current_floor).floor, HARDWARE_ORDER_INSIDE, 0); //VI FJERNER ORDER_LIGHTS (ELLER PUTTE DEN I REMOVER order?)
-    hardware_command_order_light (*p_current_floor).floor, HARDWARE_ORDER_UP, 0);
-    hardware_command_order_light (*p_current_floor).floor, HARDWARE_ORDER_DOWN, 0);
+    hardware_command_order_light ((*p_current_floor).floor, HARDWARE_ORDER_UP, 0);
+    hardware_command_order_light ((*p_current_floor).floor, HARDWARE_ORDER_DOWN, 0);
     hardware_command_door_open (1); //DØREN ÅPNER SEG
     remove_order ((*p_current_floor).floor);
     if (hardware_read_stop_signal()) { //stop må som vanlig være her
@@ -100,9 +89,9 @@ void door_opening(State *p_current_state, Floor *p_current_floor) { //FUNKSJON T
     }
 }
 
-void moving_up(State *p_current_state) {
+void moving_up(State *p_current_state, int *p_next_floor) {
     hardware_command_movement (HARDWARE_MOVEMENT_UP);
-    if (hardware_read_floor_sensor(next_floor)) { //Vi beveger oss opp til vi finner next floor
+    if (hardware_read_floor_sensor((*p_next_floor))) { //Vi beveger oss opp til vi finner next floor
         (*p_current_state) = DOOR_OPENED;
         return;
     }
@@ -112,9 +101,9 @@ void moving_up(State *p_current_state) {
     }
 }
 
-void moving_down(State *p_current_state) { //same as ususal
+void moving_down(State *p_current_state, int *p_next_floor) { //same as ususal
     hardware_command_movement (HARDWARE_MOVEMENT_DOWN);
-    if (hardware_read_floor_sensor(next_floor)) {
+    if (hardware_read_floor_sensor((*p_next_floor))) {
         (*p_current_state) = DOOR_OPENED;
         return;
     } 

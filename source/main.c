@@ -55,7 +55,6 @@ int main(int argc, char *argv[]){
     update_int (&m_global);*/
     
     //få inn pekere :)
-    
 
     while(1){
         floor = get_current_floor ();
@@ -67,6 +66,10 @@ int main(int argc, char *argv[]){
         get_next_order (&current_floor, &current_dir, &next_floor);
 
         printf ("next floor is %d\n",next_floor);
+
+        if (hardware_read_obstruction_signal()) {
+            printf ("obstruction ids active");
+        }
         
         for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
             if(hardware_read_floor_sensor(f)){
@@ -112,10 +115,10 @@ int main(int argc, char *argv[]){
                 door_opening (&current_state, &current_floor);
                 break;
             case MOVING_UP:
-                moving_up (&current_state);
+                moving_up (&current_state, &next_floor);
                 break;
             case MOVING_DOWN:
-                moving_down (&current_state);
+                moving_down (&current_state, &next_floor);
                 break;
             default:
                 break;

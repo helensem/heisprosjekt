@@ -207,3 +207,16 @@ void clear_all_order_lights(){
     }
 }
 
+int get_current_floor() {
+    if (io_read_bit(SENSOR_FLOOR1))
+        return 0;
+    else if (io_read_bit(SENSOR_FLOOR2))
+        return 1;
+    else if (io_read_bit(SENSOR_FLOOR3))
+        return 2;
+    else if (io_read_bit(SENSOR_FLOOR4))
+        return 3;
+    else
+        return -1;
+}
+
