@@ -41,6 +41,8 @@ void remove_order(int floor);
  */
 void clear_all_orders();
 
+void print_orders ();
+
 
 #endif // #ifndef __INCLUDE_QUEUE_H__
 

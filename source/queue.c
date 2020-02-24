@@ -9,8 +9,8 @@
 //disse fungerere rett og slett litt enklere enn en matrise
 
 
-int up_orders [N_FLOORS];
-int down_orders [N_FLOORS];
+static int up_orders [N_FLOORS];
+static int down_orders [N_FLOORS];
 
 
 void add_order(int floor, HardwareOrder button) {
@@ -37,7 +37,8 @@ void get_next_order(Floor *p_current_floor, Direction *p_current_dir, int *p_nex
             }
         }
     }
-    else if ((*p_current_dir) == DOWN) {
+    *p_current_dir = DOWN;
+    if ((*p_current_dir) == DOWN){
         for (int f = (*p_current_floor).floor; f>=0; f--) {
             if (down_orders[f]) {
                 *p_next_floor=f;
@@ -45,15 +46,15 @@ void get_next_order(Floor *p_current_floor, Direction *p_current_dir, int *p_nex
             }
         }
     }
-    else {
-        *p_next_floor = (*p_current_floor).floor;
-    }
+    *p_current_dir = UP;
+    return;
 }
 
 
 void remove_order(int floor) {
     up_orders[floor]=0;
     down_orders[floor]=0;
+    return;
 }
 
 
@@ -63,8 +64,17 @@ void clear_all_orders() {
         up_orders [f] = 0;
         down_orders [f] = 0;
     }
+    return;
 }
 
-
+void print_orders (){
+    for (int f = 0; f < N_FLOORS; f++){
+        printf ("%d\t", up_orders [f]);
+        printf ("\n");
+        printf ("%d\t", down_orders[f]);
+        printf ("\n");
+    }
+    return;
+}
 
 

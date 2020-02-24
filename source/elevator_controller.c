@@ -21,13 +21,15 @@
 void emergency_stop(Floor *p_current_floor, State *p_current_state) {                                     //tilhørende til STOP state, altså emergency-stop kun (vanlig stopp på etasjer er i DOOR_OPENED).
     hardware_command_movement (HARDWARE_MOVEMENT_STOP); //MOTOREN STOPPES
     clear_all_order_lights();
+    clear_all_orders ();
  //mulighet for å ta denne ut av funksjonen og sette inn etter (for clean slate)
     //LEGGE INN NOE HER FOR AT HEISEN IKKE SKAL TA INN BESTILLINGER
     
     hardware_command_stop_light (1); //LYSET SLÅR SEG PÅ
     if ((*p_current_floor).floor!=-1 && (*p_current_floor).above==0) {
         hardware_command_door_open (1);  //DERSOM VI ER PÅ EN ETASJE, SÅ SKAL DØREN ÅPNE SEG
-        if (!hardware_read_stop_signal()) {  //DERSOM DØREN ER ÅPEN OG STOPSIGNALET BRYTES, SKAL VI TIL DOOR_OPENED
+        if (!hardware_read_stop_signal()) {  
+            hardware_command_stop_light(0);//DERSOM DØREN ER ÅPEN OG STOPSIGNALET BRYTES, SKAL VI TIL DOOR_OPENED
             (*p_current_state) = DOOR_OPENED;
             return;
         }
@@ -75,19 +77,19 @@ void door_opening(State *p_current_state, Floor *p_current_floor) { //FUNKSJON T
         (*p_current_state) = STOPPING;
         return;
     }
-    if (!hardware_read_obstruction_signal ()){  //litt usikker på om dette vil funke riktig :) basically hvis obstruksjon ikke leses, så fortsetter vi sånn vi vil fortsette som vanlig
-        start_timer (); //Timer starter
-        if (check_timer()){ //hvis timeren er ferdig, så er vi tilbake på idle
+    //if (hardware_read_obstruction_signal ()){  //litt usikker på om dette vil funke riktig :) basically hvis obstruksjon ikke leses, så fortsetter vi sånn vi vil fortsette som vanlig
+        //start_timer (); }
+    
+    do {
+        start_timer ();
+    } while (hardware_read_obstruction_signal());
+    if (check_timer()){ //hvis timeren er ferdig, så er vi tilbake på idle
             hardware_command_door_open (0);
             (*p_current_state) = IDLE;
             return;
         }
     }
-    else { //hvis obstruction signal leses, så blir heisen værende i door opened.
-        (*p_current_state) = DOOR_OPENED;
-        return;
-    }
-}
+    
 
 void moving_up(State *p_current_state, int *p_next_floor) {
     hardware_command_movement (HARDWARE_MOVEMENT_UP);

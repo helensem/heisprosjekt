@@ -3,8 +3,7 @@
 #include <stdio.h>
 #include "timer.h"
 
-time_t start_time;
-time_t end_time;
+static clock_t start_time; 
 
 
 void start_timer() {
@@ -13,8 +12,7 @@ void start_timer() {
 }
 
 int check_timer() {
-    end_time = time (NULL);
-    return ((end_time - start_time) == 3);
+    return (time (NULL) >= (start_time + 3));
 }
  //bytt ut alle bool med int
 

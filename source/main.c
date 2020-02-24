@@ -34,14 +34,14 @@ int main(int argc, char *argv[]){
 
 
     hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
-    Direction current_dir = DOWN;
+    static Direction current_dir = DOWN;
     int floor = -1;
     while (floor==-1) {
         floor = get_current_floor ();
     }
     hardware_command_movement (HARDWARE_MOVEMENT_STOP);
-    State current_state = IDLE;
-    Floor current_floor; 
+    static State current_state = IDLE;
+    static Floor current_floor; 
     current_floor.floor = floor;
     current_floor.above = 0;
     int next_floor = floor;
@@ -60,21 +60,26 @@ int main(int argc, char *argv[]){
         floor = get_current_floor ();
         if (floor != -1) {
             current_floor.floor = floor;
+            current_floor.above = 0;
         }
-        printf ("current floor is, %d\n", current_floor.floor);
+
+        //print_orders ();
         
         get_next_order (&current_floor, &current_dir, &next_floor);
 
-        printf ("next floor is %d\n",next_floor);
-
-        if (hardware_read_obstruction_signal()) {
-            printf ("obstruction ids active");
-        }
         
         for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
             if(hardware_read_floor_sensor(f)){
                 hardware_command_floor_indicator_on(f);
             }
+        }
+
+        if (hardware_read_floor_sensor (0)){
+            current_dir = UP;
+        }
+
+        if (hardware_read_floor_sensor(3)) {
+            current_dir = DOWN;
         }
 
          for(int f = 0; f < N_FLOORS; f++){
