@@ -28,25 +28,47 @@ void add_order(int floor, HardwareOrder button) {
 
 
 //fuck me, gjør den enkler for gad dammit.
-void get_next_order(Floor *p_current_floor, Direction *p_current_dir, int *p_next_floor) { //Legg merke til at next_floor er en peker, dette er for at vi kan oppdatere den enklere, vi tar inn referanse av next_floor og da kan den endre seg uten at vi må tilordne den noe. Da slipper vi også noe stress med at next_floor blir minus 1.
+int queue_next(Floor *p_current_floor, Direction *p_current_dir) { //Legg merke til at next_floor er en peker, dette er for at vi kan oppdatere den enklere, vi tar inn referanse av next_floor og da kan den endre seg uten at vi må tilordne den noe. Da slipper vi også noe stress med at next_floor blir minus 1.
+    int next_floor;
     if ((*p_current_dir) == UP) {
-        for (int f = (*p_current_floor).floor; f < N_FLOORS; f++) {
+        for (int f = (*p_current_floor).floor +1; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
             if (up_orders[f]) {
-                *p_next_floor = f;
-                return;
+                next_floor = f;
+                return next_floor;
             }
         }
+        if (down_orders [HARDWARE_NUMBER_OF_FLOORS-1] ==1){
+            return 3;
+        }
     }
-    *p_current_dir = DOWN;
-    if ((*p_current_dir) == DOWN){
-        for (int f = (*p_current_floor).floor; f>=0; f--) {
+    else if ((*p_current_dir) == DOWN){
+        for (int f = (*p_current_floor).floor-1; f>=0; f--) {
             if (down_orders[f]) {
-                *p_next_floor=f;
-                return;
+                next_floor=f;
+                return next_floor;
             }
         }
+        if (up_orders[0]) {
+            return 0;
+        }
     }
-    *p_current_dir = UP;
+    return -1;
+}
+
+void get_next_order(int *p_next_floor, Direction *p_current_dir, Floor *p_current_floor) {
+    *p_next_floor = get_next_in_queue ((*p_current_floor).floor, *p_current_dir);
+    if ((*p_next_floor)==-1) {
+        if ((*p_current_dir)==UP){
+            *p_current_dir = DOWN;
+            *p_next_floor = queue_next(HARDWARE_NUMBER_OF_FLOORS-1, *p_current_dir);
+            return;
+        }
+        else if (*p_current_dir == DOWN){
+            *p_current_dir = UP;
+            *p_next_floor = queue_next (0, *p_current_dir);
+            return;
+        }
+    }
     return;
 }
 

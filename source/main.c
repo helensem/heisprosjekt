@@ -58,8 +58,8 @@ int main(int argc, char *argv[]){
 
     while(1){
         floor = get_current_floor ();
-        if (floor != -1) {
-            current_floor.floor = floor;
+        if (floor == current_floor.floor) {
+            current_floor.floor = floor;  //Dette bør fikse problemet med at current floor ikke blir -1.
             current_floor.above = 0;
         }
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
             current_dir = DOWN;
         }
 
-         for(int f = 0; f < N_FLOORS; f++){
+         for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
              if(hardware_read_order(f, HARDWARE_ORDER_INSIDE)){
                  hardware_command_order_light(f, HARDWARE_ORDER_INSIDE, 1);
                  add_order(f, HARDWARE_ORDER_INSIDE);

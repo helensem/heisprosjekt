@@ -20,13 +20,22 @@ void add_order(int floor, HardwareOrder button);
 
 
 /**
- @brief checks the arrays to find the next request that is making sense for the elevator
+ @brief checks the array of the current direction for an order
  @param p_current_floor, pointer to where the elevator is
  @param p_current_dir, pointer to the direction of the elevator
- @param p_next_floor, a pointer to the next floor
+ @return next floor if order in the same directon, -1 otherwise
+ 
  */
 
-void get_next_order(Floor *p_current_floor, Direction *p_current_dir, int *p_next_floor);
+int queue_next(Floor *p_current_floor, Direction *p_current_dir);
+
+/**
+@brief checks the arrays to find the next request that is making sense for the elevator
+@param p_current_floor, pointer to where the elevator is
+@param p_current_dir, pointer to the direction of the elevator
+@param p_next_floor, a pointer to the next floor
+*/
+void get_next_order(int *p_next_floor, Direction *p_current_dir, Floor *p_current_floor);
 
 
 
