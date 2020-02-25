@@ -16,7 +16,6 @@ typedef enum {
     DOWN,
     UP
 } Direction;
-//enum for direction til heisen, denne er kun nødvendig å vite iforhold til om heisen skal betjene down-orders eller up-orders.
 
 /**
  @brief struct for flooer. int floor says which floor the elevator was previously at. above says if the elevator is above that current floor
@@ -38,7 +37,6 @@ typedef enum {
     DOOR_OPENED
 } State;
 
-//enum for state til heisen
 
 
 /**
@@ -56,7 +54,7 @@ void emergency_stop(Floor *p_current_floor, State *p_current_state);
  @param p_current_dir, pointer to elevators direction
  @param p_next_floor, pointer to elevators next floor
  */
-void idle (State *p_current_state, Direction *p_current_dir, Floor *p_current_floor, int *p_next_floor);
+void idle(State *p_current_state, Direction *p_current_dir, Floor *p_current_floor, int *p_next_floor);
 
 /**
  @brief Function related to the opened door state. 

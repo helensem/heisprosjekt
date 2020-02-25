@@ -32,5 +32,4 @@ int check_timer() {
         return 0;
     }
 }
- //bytt ut alle bool med int
 

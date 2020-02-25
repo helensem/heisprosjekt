@@ -40,11 +40,11 @@ void get_next_order(Floor *p_current_floor, Direction *p_current_dir, int *p_nex
 
 /**
 @brief checks the current floor if there are any orders there 
-@param p_current_floor, pointer to where the elevator is
+@param floor, the floor wished to be checked
 @param _dir, the direction of the elevator
 @return 1 if order is on floor, 0 otherwise 
 */
-int check_floor_for_orders (Floor *p_current_floor, Direction dir);
+int check_floor_for_orders(int floor, Direction dir);
 
 
 
@@ -59,7 +59,6 @@ void remove_order(int floor);
  */
 void clear_all_orders();
 
-void print_orders ();
 
 
 #endif // #ifndef __INCLUDE_QUEUE_H__

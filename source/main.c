@@ -17,8 +17,6 @@
 }
 */
 
-//legg inn global variabel direction
-//legg inn at heisen må flytte seg til en etasje for å få state idle 
 
 
 
@@ -26,65 +24,44 @@
 
 int main(){
 
-    printf("hei\n");
+
 
     int error = hardware_init();
-    printf("asd");
     if(error != 0){
-        printf("unable to initialize\n");
         fprintf(stderr, "Unable to initialize hardware\n");
-        
         exit(1);
-    }else{
-        printf("able to initizlize\n");
     }
 
     //signal(SIGINT, sigint_handler);
-
-    printf("Elevator starting\n");
-
 
 
     hardware_command_movement(HARDWARE_MOVEMENT_UP);
     Direction current_dir = UP;
     int floor = -1;
     while(floor==-1) {
-        floor= get_current_floor();
-    
+        floor = get_current_floor();
     }
-
-    printf("ute av while\n");
-
     
     hardware_command_movement(HARDWARE_MOVEMENT_STOP);
     static State current_state = IDLE;
-    static Floor* current_floor; 
-    current_floor->floor = floor;
-    current_floor->above = 0;
+    static Floor current_floor; 
+    current_floor.floor = floor;
+    current_floor.above = 0;
     int next_floor = floor;
-    
+
+    clear_all_order_lights();
 
     while(1){
         floor = get_current_floor();
-        printf ("floor is %d\n", floor);
-        printf ("current floor is %d\n", current_floor.floor);
-        if(floor != current_floor.floor && floor != -1) {
-            current_floor.floor = floor;  //Dette bør fikse problemet med at current floor ikke blir -1.
+        if(floor != -1 && current_state !=MOVING_DOWN) {
+            current_floor.floor = floor; 
             current_floor.above = 0;
         }
         if (floor == -1) {
             current_floor.above = 1;
         }
-
-        printf ("is above %d\n", current_floor.above);
-
-
-        print_orders ();
-
-    
         
         get_next_order(&current_floor, &current_dir, &next_floor);
-        printf ("next floor is %d\n", next_floor);
 
         
         for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
@@ -95,18 +72,16 @@ int main(){
                 hardware_command_order_light(f, HARDWARE_ORDER_INSIDE, 1);
                 add_order(f, HARDWARE_ORDER_INSIDE);
             }
-            /* Orders going up */
+    
             else if(hardware_read_order(f, HARDWARE_ORDER_UP)){
                 hardware_command_order_light(f, HARDWARE_ORDER_UP, 1);
                 add_order(f, HARDWARE_ORDER_UP);
             }
             
-            /* Orders going down */
             else if(hardware_read_order(f, HARDWARE_ORDER_DOWN)){
                 hardware_command_order_light(f, HARDWARE_ORDER_DOWN, 1);
                 add_order(f, HARDWARE_ORDER_DOWN);
             }
-            /* Internal orders */
         }
 
 
@@ -139,12 +114,6 @@ int main(){
                 break;
         }
     }
-
-    
-
-
-        /* All buttons must be polled, like this: */
-       
 
     return 0;
 }
