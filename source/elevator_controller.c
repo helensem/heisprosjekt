@@ -60,9 +60,6 @@ void idle (State *p_current_state, Direction *p_current_dir, Floor *p_current_fl
 void door_opening(State *p_current_state, Floor *p_current_floor) {
     printf("door opening \n");
     hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-    hardware_command_order_light((*p_current_floor).floor, HARDWARE_ORDER_INSIDE, 0);
-    hardware_command_order_light ((*p_current_floor).floor, HARDWARE_ORDER_UP, 0);
-    hardware_command_order_light ((*p_current_floor).floor, HARDWARE_ORDER_DOWN, 0);
     hardware_command_door_open (1);
     remove_order ((*p_current_floor).floor);
     if (hardware_read_stop_signal()) {
@@ -99,7 +96,7 @@ void moving_up(Floor *p_current_floor, State *p_current_state, int *p_next_floor
 void moving_down(Floor *p_current_floor, State *p_current_state, int *p_next_floor) {
     printf ("moving down \n");
     hardware_command_movement (HARDWARE_MOVEMENT_DOWN);
-    if (hardware_read_floor_sensor ((*p_current_floor).floor)){
+    if (hardware_read_floor_sensor ((*p_current_floor).floor)&&(!check_floor_for_orders(p_current_floor, DOWN))){
         (*p_current_floor).floor --;
     }
     if (hardware_read_floor_sensor((*p_next_floor))) {
@@ -110,7 +107,7 @@ void moving_down(Floor *p_current_floor, State *p_current_state, int *p_next_flo
         (*p_current_state) = STOPPING;
         return;
     }  
-    if (check_floor_for_orders (p_current_floor, DOWN )) {
+    if (check_floor_for_orders (p_current_floor, DOWN)) {
         (*p_current_state) = DOOR_OPENED;
         return;
     }

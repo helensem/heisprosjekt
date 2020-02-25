@@ -98,6 +98,9 @@ int check_floor_for_orders (Floor *p_current_floor, Direction dir) {
 void remove_order(int floor) {
     up_orders[floor]=0;
     down_orders[floor]=0;
+    hardware_command_order_light((*p_current_floor).floor, HARDWARE_ORDER_INSIDE, 0);
+    hardware_command_order_light ((*p_current_floor).floor, HARDWARE_ORDER_UP, 0);
+    hardware_command_order_light ((*p_current_floor).floor, HARDWARE_ORDER_DOWN, 0);
     return;
 }
 
