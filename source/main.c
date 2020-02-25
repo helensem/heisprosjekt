@@ -58,20 +58,11 @@ int main(){
     
     hardware_command_movement(HARDWARE_MOVEMENT_STOP);
     static State current_state = IDLE;
-    static Floor current_floor; 
-    current_floor.floor = floor;
-    current_floor.above = 0;
+    static Floor* current_floor; 
+    current_floor->floor = floor;
+    current_floor->above = 0;
     int next_floor = floor;
     
-    
-   /* static int m_global;
-    void update_int (int *p_m_global) {
-        *p_m = tall;
-    }
-    
-    update_int (&m_global);*/
-    
-    //få inn pekere :)
 
     while(1){
         floor = get_current_floor();
@@ -87,14 +78,10 @@ int main(){
 
         printf ("is above %d\n", current_floor.above);
 
-        //if(current_floor.floor == -1) {
-          //  current_state = IDLE;
-            //current_floor.floor = 3; 
-       // }
 
         print_orders ();
 
-        //print_orders();
+    
         
         get_next_order(&current_floor, &current_dir, &next_floor);
         printf ("next floor is %d\n", next_floor);
