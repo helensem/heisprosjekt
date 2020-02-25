@@ -8,19 +8,28 @@
 #include "timer.h"
 #include "hardware.h"
 
-typedef enum { //også litt usikker på hvor det er best å putte disse
+
+/**
+ @brief enum for Direction.
+ */
+typedef enum {
     DOWN,
     UP
 } Direction;
 //enum for direction til heisen, denne er kun nødvendig å vite iforhold til om heisen skal betjene down-orders eller up-orders.
 
-
+/**
+ @brief struct for flooer. int floor says which floor the elevator was previously at. above says if the elevator is above that current floor
+ */
 typedef struct {
     int floor;
     int above;
 } Floor;
 
 
+/**
+ @brief enum for the states of the elevator
+ */
 typedef enum {
     IDLE,
     MOVING_UP,

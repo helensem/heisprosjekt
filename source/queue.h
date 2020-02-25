@@ -27,7 +27,7 @@ void add_order(int floor, HardwareOrder button);
  
  */
 
-int queue_next(int floor, Direction *p_current_dir, Floor *p_current_floor);
+int get_order_in_current_direction(int floor, Direction *p_current_dir, Floor *p_current_floor);
 
 /**
 @brief checks the arrays to find the next request that is making sense for the elevator
