@@ -6,6 +6,7 @@
 #include "queue.h"
 #include "elevator_controller.h"
 #include "timer.h"
+#include "driver/io.h"
 
 
 /*static void sigint_handler(int sig){
@@ -19,27 +20,43 @@
 //legg inn global variabel direction
 //legg inn at heisen må flytte seg til en etasje for å få state idle 
 
-int main(int argc, char *argv[]){
+
+
+
+
+int main(){
+
+    printf("hei\n");
 
     int error = hardware_init();
+    printf("asd");
     if(error != 0){
+        printf("unable to initialize\n");
         fprintf(stderr, "Unable to initialize hardware\n");
+        
         exit(1);
+    }else{
+        printf("able to initizlize\n");
     }
 
     //signal(SIGINT, sigint_handler);
 
-    printf("Elevator starting");
+    printf("Elevator starting\n");
 
 
 
-    hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
-    static Direction current_dir = DOWN;
+    hardware_command_movement(HARDWARE_MOVEMENT_UP);
+    Direction current_dir = UP;
     int floor = -1;
-    while (floor==-1) {
-        floor = get_current_floor ();
+    while(floor==-1) {
+        floor= get_current_floor();
+    
     }
-    hardware_command_movement (HARDWARE_MOVEMENT_STOP);
+
+    printf("ute av while\n");
+
+    
+    hardware_command_movement(HARDWARE_MOVEMENT_STOP);
     static State current_state = IDLE;
     static Floor current_floor; 
     current_floor.floor = floor;
@@ -57,15 +74,30 @@ int main(int argc, char *argv[]){
     //få inn pekere :)
 
     while(1){
-        floor = get_current_floor ();
-        if (floor != current_floor.floor) {
+        floor = get_current_floor();
+        printf ("floor is %d\n", floor);
+        printf ("current floor is %d\n", current_floor.floor);
+        if(floor != current_floor.floor && floor != -1) {
             current_floor.floor = floor;  //Dette bør fikse problemet med at current floor ikke blir -1.
             current_floor.above = 0;
         }
+        if (floor == -1) {
+            current_floor.above = 1;
+        }
 
-        //print_orders ();
+        printf ("is above %d\n", current_floor.above);
+
+        //if(current_floor.floor == -1) {
+          //  current_state = IDLE;
+            //current_floor.floor = 3; 
+       // }
+
+        print_orders ();
+
+        //print_orders();
         
-        get_next_order (&current_floor, &current_dir, &next_floor);
+        get_next_order(&current_floor, &current_dir, &next_floor);
+        printf ("next floor is %d\n", next_floor);
 
         
         for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
@@ -90,12 +122,13 @@ int main(int argc, char *argv[]){
             /* Internal orders */
         }
 
-        if (hardware_read_floor_sensor (0)){
-            current_dir = UP;
+
+        if(hardware_read_floor_sensor(3)) {
+            current_dir = DOWN;
         }
 
-        if (hardware_read_floor_sensor(3)) {
-            current_dir = DOWN;
+        if(hardware_read_floor_sensor(0)){
+            current_dir = UP;
         }
 
        
@@ -104,20 +137,22 @@ int main(int argc, char *argv[]){
                 idle(&current_state, &current_dir, &current_floor, &next_floor);
                 break;
             case STOPPING:
-                emergency_stop (&current_floor, &current_state);
+                emergency_stop(&current_floor, &current_state);
                 break;
             case DOOR_OPENED:
-                door_opening (&current_state, &current_floor);
+                door_opening(&current_state, &current_floor);
                 break;
             case MOVING_UP:
-                moving_up (&current_state, &next_floor);
+                moving_up(&current_floor, &current_state, &next_floor);
                 break;
             case MOVING_DOWN:
-                moving_down (&current_state, &next_floor);
+                moving_down(&current_floor, &current_state, &next_floor);
                 break;
             default:
                 break;
         }
+    }
+
     
 
 

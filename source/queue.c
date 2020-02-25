@@ -32,21 +32,21 @@ void add_order(int floor, HardwareOrder button) {
 
 
 //fuck me, gjør den enkler for gad dammit.
-int queue_next(Floor *p_current_floor, Direction *p_current_dir) { //Legg merke til at next_floor er en peker, dette er for at vi kan oppdatere den enklere, vi tar inn referanse av next_floor og da kan den endre seg uten at vi må tilordne den noe. Da slipper vi også noe stress med at next_floor blir minus 1.
+int queue_next(int floor, Direction *p_current_dir, Floor *p_current_floor) { //Legg merke til at next_floor er en peker, dette er for at vi kan oppdatere den enklere, vi tar inn referanse av next_floor og da kan den endre seg uten at vi må tilordne den noe. Da slipper vi også noe stress med at next_floor blir minus 1.
     int next_floor;
     if ((*p_current_dir) == UP) {
-        for (int f = (*p_current_floor).floor +1; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
+        for (int f = floor; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
             if (up_orders[f]) {
                 next_floor = f;
                 return next_floor;
             }
         }
-        if (down_orders [HARDWARE_NUMBER_OF_FLOORS-1] ==1){
+        if (down_orders [HARDWARE_NUMBER_OF_FLOORS-1] == 1){
             return 3;
         }
     }
     else if ((*p_current_dir) == DOWN){
-        for (int f = (*p_current_floor).floor-1; f>=0; f--) {
+        for (int f = floor; f>=0; f--) {
             if (down_orders[f]) {
                 next_floor=f;
                 return next_floor;
@@ -59,21 +59,39 @@ int queue_next(Floor *p_current_floor, Direction *p_current_dir) { //Legg merke 
     return -1;
 }
 
-void get_next_order(int *p_next_floor, Direction *p_current_dir, Floor *p_current_floor) {
-    *p_next_floor = get_next_in_queue ((*p_current_floor).floor, *p_current_dir);
+void get_next_order(Floor *p_current_floor, Direction *p_current_dir, int *p_next_floor) {
+    *p_next_floor = queue_next((*p_current_floor).floor, p_current_dir, p_current_floor);
+    printf ("next floor from queue is %d\n", *p_next_floor);
     if ((*p_next_floor)==-1) {
         if ((*p_current_dir)==UP){
+             printf ("direction was up\n");
             *p_current_dir = DOWN;
-            *p_next_floor = queue_next(HARDWARE_NUMBER_OF_FLOORS-1, *p_current_dir);
+            *p_next_floor = queue_next(HARDWARE_NUMBER_OF_FLOORS-1, p_current_dir, p_current_floor);
+            printf ("runned queue again and next floor is %d\n", *p_next_floor);
             return;
         }
         else if (*p_current_dir == DOWN){
+            printf ("direction was down \n");
             *p_current_dir = UP;
-            *p_next_floor = queue_next (0, *p_current_dir);
+            *p_next_floor = queue_next (0, p_current_dir, p_current_floor);
+            printf ("runned queue again and next floor is %d\n", *p_next_floor);
             return;
         }
     }
     return;
+}
+
+int check_floor_for_orders (Floor *p_current_floor, Direction dir) {
+    if (dir == UP ){
+        if (hardware_read_floor_sensor ((*p_current_floor).floor) && (up_orders [(*p_current_floor).floor])){
+            return 1;
+         }
+    }
+    if (dir == DOWN) {
+        if (hardware_read_floor_sensor ((*p_current_floor).floor)&& down_orders [(*p_current_floor).floor])
+        return 1; 
+    }
+    return 0;
 }
 
 

@@ -3,6 +3,7 @@
 #include "io.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 static int hardware_legal_floor(int floor, HardwareOrder order_type){
     int lower_floor = 0;
@@ -47,6 +48,7 @@ int hardware_init(){
     if(!io_init()){
         return 1;
     }
+    printf("her\n");
 
     for(int i = 0; i < HARDWARE_NUMBER_OF_FLOORS; i++){
         if(i != 0){

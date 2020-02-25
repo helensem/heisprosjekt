@@ -26,7 +26,7 @@ void emergency_stop(Floor *p_current_floor, State *p_current_state) {           
     //LEGGE INN NOE HER FOR AT HEISEN IKKE SKAL TA INN BESTILLINGER
     
     hardware_command_stop_light (1); //LYSET SLÅR SEG PÅ
-    if ((*p_current_floor).floor!=-1 && (*p_current_floor).above==0) {
+    if ((*p_current_floor).above==0) {
         hardware_command_door_open (1);  //DERSOM VI ER PÅ EN ETASJE, SÅ SKAL DØREN ÅPNE SEG
         if (!hardware_read_stop_signal()) {  
             hardware_command_stop_light(0);//DERSOM DØREN ER ÅPEN OG STOPSIGNALET BRYTES, SKAL VI TIL DOOR_OPENED
@@ -41,32 +41,38 @@ void emergency_stop(Floor *p_current_floor, State *p_current_state) {           
     }
 }
 
-void idle (State *p_current_state, Direction *p_current_dir, Floor *p_current_floor, int *p_next_floor) {  //Funskjon tilhørende idle state. Start-tilstand til heisen. Heisen er i ro og leter etter bestillinger, og bestemmer om den skal kjøre opp, ned eller forbli i ro
+void idle (State *p_current_state, Direction *p_current_dir, Floor *p_current_floor, int *p_next_floor) {  
+    printf ("i idle \n");//Funskjon tilhørende idle state. Start-tilstand til heisen. Heisen er i ro og leter etter bestillinger, og bestemmer om den skal kjøre opp, ned eller forbli i ro
     if (hardware_read_stop_signal()) {  //ALLTID HA EN READ_STOP I ALLE TILSTANDER
         (*p_current_state) = STOPPING;
         return;
     }
     hardware_command_movement (HARDWARE_MOVEMENT_STOP); //MOTOREN MÅ STOPPES SÅNN I TILFELLE
-    if ((*p_next_floor) < (*p_current_floor).floor){ //DERSOM NEXT_FLOOR ER UNDER CURRENT_FLOOR, SKAL HEISEN KJØRE NED
+    if ((*p_next_floor) < (*p_current_floor).floor && (*p_next_floor)!= -1 ){ //DERSOM NEXT_FLOOR ER UNDER CURRENT_FLOOR, SKAL HEISEN KJØRE NED
         (*p_current_floor).floor--;
         (*p_current_floor).above = 1;   //LEGG OGSÅ MERKE TIL AT CURRENT_FLOOR DEKREMENTERES OG ABOVE SETTER TIL 1, FORDI DA ER VI JO OVER ETASJEN UNDER, BASICALLY
         (*p_current_dir) = DOWN; //DIRECTION MÅ SETTES NED
         (*p_current_state) = MOVING_DOWN;  //ALT DETTE KAN TEKNISK SETTES INN I MOVING_DOWN, MEN DET ER VEL LITT HIPP SOM HAPP (håper jeg)
         return;
     }
-    else if ((*p_next_floor) > (*p_current_floor).floor) { //SAME PROCEDURE, BARE AT NEXT_FLOOR ER OVER, OG VI FLYTTER OSS OPP
+    else if ((*p_next_floor) > (*p_current_floor).floor && (*p_next_floor)!= -1) { //SAME PROCEDURE, BARE AT NEXT_FLOOR ER OVER, OG VI FLYTTER OSS OPP
         (*p_current_dir) = UP;
         (*p_current_floor).above = 1;
         (*p_current_state) = MOVING_UP;
          return;//sett inn return hver gang du switcher state, for å slippe at funksjonen fortsetter nedover
     }
-    else if ((*p_next_floor) == (*p_current_floor).floor){ //I FUNKSJONEN GET_NEXT_REQUEST VIL NEXT_FLOOR ALLTID SETTES TIL CURRENT_FLOOR DERSOM DET IKKE ER NOE BESTILLINGER, VI BLIR DER VI ER
+    else if ((*p_next_floor) == (*p_current_floor).floor && (*p_next_floor)!= -1 &&(*p_current_floor).above ==0){ //I FUNKSJONEN GET_NEXT_REQUEST VIL NEXT_FLOOR ALLTID SETTES TIL CURRENT_FLOOR DERSOM DET IKKE ER NOE BESTILLINGER, VI BLIR DER VI ER
+        (*p_current_state) = DOOR_OPENED;
+        return;
+    }
+    else{
         (*p_current_state) = IDLE;
         return;
     }
 }
 
-void door_opening(State *p_current_state, Floor *p_current_floor) { //FUNKSJON TIL DOOR OPENING
+void door_opening(State *p_current_state, Floor *p_current_floor) {
+    printf("dør åpnet \n"); //FUNKSJON TIL DOOR OPENING
     hardware_command_movement(HARDWARE_MOVEMENT_STOP); //STOPP HEISEN
     hardware_command_order_light((*p_current_floor).floor, HARDWARE_ORDER_INSIDE, 0); //VI FJERNER ORDER_LIGHTS (ELLER PUTTE DEN I REMOVER order?)
     hardware_command_order_light ((*p_current_floor).floor, HARDWARE_ORDER_UP, 0);
@@ -74,7 +80,7 @@ void door_opening(State *p_current_state, Floor *p_current_floor) { //FUNKSJON T
     hardware_command_door_open (1); //DØREN ÅPNER SEG
     remove_order ((*p_current_floor).floor);
     if (hardware_read_stop_signal()) {
-        reset_timer();//stop må som vanlig være her
+        reset_timer();
         (*p_current_state) = STOPPING;
         return;
     }
@@ -88,9 +94,11 @@ void door_opening(State *p_current_state, Floor *p_current_floor) { //FUNKSJON T
     }
     
 
-void moving_up(State *p_current_state, int *p_next_floor) {
+void moving_up(Floor *p_current_floor, State *p_current_state, int *p_next_floor) {
+    printf ("moving up\n");
     hardware_command_movement (HARDWARE_MOVEMENT_UP);
-    if (hardware_read_floor_sensor((*p_next_floor))) { //Vi beveger oss opp til vi finner next floor
+    if (hardware_read_floor_sensor((*p_next_floor))){
+        printf ("read sensor\n"); //Vi beveger oss opp til vi finner next floor
         (*p_current_state) = DOOR_OPENED;
         return;
     }
@@ -98,9 +106,14 @@ void moving_up(State *p_current_state, int *p_next_floor) {
         (*p_current_state) = STOPPING;
         return;
     }
+    if (check_floor_for_orders (p_current_floor, UP )) {
+        (*p_current_state) = DOOR_OPENED;
+        return;
+    }
 }
 
-void moving_down(State *p_current_state, int *p_next_floor) { //same as ususal
+void moving_down(Floor *p_current_floor, State *p_current_state, int *p_next_floor) {
+    printf ("moving down \n"); //same as ususal
     hardware_command_movement (HARDWARE_MOVEMENT_DOWN);
     if (hardware_read_floor_sensor((*p_next_floor))) {
         (*p_current_state) = DOOR_OPENED;
@@ -110,6 +123,10 @@ void moving_down(State *p_current_state, int *p_next_floor) { //same as ususal
         (*p_current_state) = STOPPING;
         return;
     }  
+    if (check_floor_for_orders (p_current_floor, DOWN )) {
+        (*p_current_state) = DOOR_OPENED;
+        return;
+    }
 }
 
 

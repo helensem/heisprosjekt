@@ -8,11 +8,12 @@
 
 #include <stdio.h>
 #include <time.h>
+#include "hardware.h"
 
 /**
  @brief resets the timer
  */
-void reset_timer()
+void reset_timer();
 
 /**
  @brief Sets the offset of the timer (start time)
