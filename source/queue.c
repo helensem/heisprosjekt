@@ -26,7 +26,7 @@ void add_order(int floor, HardwareOrder button) {
 }
 
 
-int get_order_in_current_direction(int floor, Direction *p_current_dir, Floor *p_current_floor) { 
+int get_order_in_current_direction(int floor, Direction *p_current_dir) {
     if (*p_current_dir == UP) {
         for (int f = floor; f < HARDWARE_NUMBER_OF_FLOORS; f++) {
             if (up_orders[f]) {
@@ -51,16 +51,16 @@ int get_order_in_current_direction(int floor, Direction *p_current_dir, Floor *p
 }
 
 void get_next_order(Floor *p_current_floor, Direction *p_current_dir, int *p_next_floor) {
-    *p_next_floor = get_order_in_current_direction(p_current_floor->floor, p_current_dir, p_current_floor);
+    *p_next_floor = get_order_in_current_direction(p_current_floor->floor, p_current_dir);
     if (*p_next_floor==-1) {
-        if ((*p_current_dir)==UP){
+        if (*p_current_dir==UP){
             *p_current_dir = DOWN;
-            *p_next_floor = get_order_in_current_direction(HARDWARE_NUMBER_OF_FLOORS-1, p_current_dir, p_current_floor);
+            *p_next_floor = get_order_in_current_direction(HARDWARE_NUMBER_OF_FLOORS-1, p_current_dir);
             return;
         }
         else if (*p_current_dir == DOWN){
             *p_current_dir = UP;
-            *p_next_floor = get_order_in_current_direction (0, p_current_dir, p_current_floor);
+            *p_next_floor = get_order_in_current_direction (1, p_current_dir);
             return;
         }
     }
