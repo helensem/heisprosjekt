@@ -64,14 +64,19 @@ void idle(State *p_current_state, Direction *p_current_dir, Floor *p_current_flo
 void door_opening(State *p_current_state, Floor *p_current_floor);
 
 /**
- @brief Function related to when the elevator is moving upwards. 
- @param p_current_state, pointer to elevators current state
+ @brief Function related to when the elevator is moving upwards.
+ @param p_current_floor pointer to elevators current position
+ @param p_current_state pointer to elevators current state
+ @param p_next_floor pointer to elevators next floor
+ 
  */
 void moving_up(Floor *p_current_floor, State *p_current_state, int *p_next_floor);
 
 /**
  @brief Function related to when the elevator is moving downwards. 
- @param p_current_state, pointer to elevators current srate
+ @param p_current_floor pointer to elevators current position
+ @param p_current_state pointer to elevators current state
+ @param p_next_floor pointer to elevators next floor
  */
 
 void moving_down(Floor *p_current_floor, State *p_current_state, int *p_next_floor);
