@@ -1,9 +1,12 @@
-/**
- @brief timer functions
- */
 
 #ifndef __INCLUDE_TIMER_H__
 #define __INCLUDE_TIMER_H__
+
+/**
+ @file
+ @brief timer functions
+ */
+
 
 
 #include <stdio.h>

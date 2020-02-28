@@ -27,7 +27,7 @@ void emergency_stop(Floor *p_current_floor, State *p_current_state) {
     }
 }
 
-void idle(State *p_current_state, Direction *p_current_dir, Floor *p_current_floor, int *p_next_floor){  
+void idle(State *p_current_state, Floor *p_current_floor, int *p_next_floor){  
     if (hardware_read_stop_signal()) {
         *p_current_state = STOPPING;
         return;
@@ -42,14 +42,12 @@ void idle(State *p_current_state, Direction *p_current_dir, Floor *p_current_flo
         return;
     }
     else if(*p_next_floor > p_current_floor->floor && *p_next_floor!= -1) {
-         *p_current_dir = UP;
          *p_current_state = MOVING_UP;
          return;
     }
     else if (*p_next_floor == p_current_floor->floor && *p_next_floor!= -1){
          if (p_current_floor->above ==1) { 
-             *p_next_floor=p_current_floor->floor; 
-             *p_current_dir = DOWN;
+             *p_next_floor=p_current_floor->floor;
              *p_current_state = MOVING_DOWN;
              return;
              }

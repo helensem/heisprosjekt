@@ -9,17 +9,6 @@
 #include "driver/io.h"
 
 
-/*static void sigint_handler(int sig){
-    (void)(sig);
-    printf("Terminating elevator\n");
-    hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-    exit(0);
-}
-*/
-
-
-
-
 
 
 int main(){
@@ -31,8 +20,6 @@ int main(){
         fprintf(stderr, "Unable to initialize hardware\n");
         exit(1);
     }
-
-    //signal(SIGINT, sigint_handler);
 
 
     hardware_command_movement(HARDWARE_MOVEMENT_UP);
@@ -96,7 +83,7 @@ int main(){
        
         switch(current_state) {
             case IDLE:
-                idle(&current_state, &current_dir, &current_floor, &next_floor);
+                idle(&current_state, &current_floor, &next_floor);
                 break;
             case STOPPING:
                 emergency_stop(&current_floor, &current_state);

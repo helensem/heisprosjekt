@@ -3,21 +3,21 @@
 #include <stdio.h>
 #include "timer.h"
 
-static time_t timeout_time;
+static time_t offset_time;
 
 void reset_timer(){
-    timeout_time = 0;
+    offset_time = 0;
     return;
 }
 
 
 void start_timer() {
-    timeout_time = time (NULL);
+    offset_time = time (NULL);
     return;
 }
 
 int check_timer() {
-    if (timeout_time == 0) {
+    if (offset_time == 0) {
         start_timer ();
     }
     if(hardware_read_obstruction_signal()){
