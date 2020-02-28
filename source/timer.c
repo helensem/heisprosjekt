@@ -24,7 +24,7 @@ int check_timer() {
         reset_timer();
         return 0;
     }
-    if((time (NULL) >= (timeout_time + 3))){
+    if((time (NULL) >= (offset_time + 3))){
         reset_timer();
         return 1;
     }
